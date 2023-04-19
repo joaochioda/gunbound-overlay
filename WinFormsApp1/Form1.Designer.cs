@@ -11,14 +11,6 @@
         ///  Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
-                components.Dispose();
-            }
-            base.Dispose(disposing);
-        }
 
         #region Windows Form Designer generated code
 
@@ -38,7 +30,9 @@
             Name = "Form1";
             Text = "Form1";
             Load += Form1_Load;
+            Click += Form1_Load;
             Paint += Form1_Paint;
+            MouseClick += Form1_MouseDown;
             ResumeLayout(false);
         }
 
