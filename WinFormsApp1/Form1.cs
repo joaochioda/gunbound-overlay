@@ -14,6 +14,9 @@ namespace WinFormsApp1
 
 
     {
+        private const int GWL_EXSTYLE = -20;
+        private const int WS_EX_TRANSPARENT = 0x00000020;
+
         RECT rect;
         public const string WINDOW_NAME = "GunBound";
         IntPtr handle = FindWindow(null, WINDOW_NAME);
@@ -24,14 +27,9 @@ namespace WinFormsApp1
         }
 
 
-        [DllImport("user32.dll")]
-        static extern int GetWindowLong(IntPtr hWnd, int nIndex);
 
         [DllImport("user32.dll")]
         static extern IntPtr GetForegroundWindow();
-
-        [DllImport("user32.dll")]
-        static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
 
         [DllImport("user32.dll", SetLastError = true)]
         static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
@@ -43,6 +41,12 @@ namespace WinFormsApp1
         [DllImport("kernel32.dll")]
         static extern IntPtr OpenProcess(int dwDesiredAccess, bool bInheritHandle, int dwProcessId);
 
+        [DllImport("user32.dll")]
+        private static extern int SetWindowLong(IntPtr hWnd, int nIndex, int dwNewLong);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowLong(IntPtr hWnd, int nIndex);
+
         int mockWidth = 1200;
         int mockHeight = 900;
         int read, write;
@@ -52,6 +56,18 @@ namespace WinFormsApp1
 
         public Form1()
         {
+            var hotkey = new Hotkey(Keys.F9, () => {
+                // Set the form click-through
+                int exStyle = GetWindowLong(this.Handle, GWL_EXSTYLE);
+                SetWindowLong(this.Handle, GWL_EXSTYLE, exStyle | WS_EX_TRANSPARENT);
+            });
+
+            var hotkey1 = new Hotkey(Keys.F10, () => {
+                // Set the form click-through
+                int exStyle = GetWindowLong(this.Handle, GWL_EXSTYLE);
+                SetWindowLong(this.Handle, GWL_EXSTYLE, exStyle & ~WS_EX_TRANSPARENT);
+            });
+
             InitializeComponent();
         }
 
@@ -131,32 +147,10 @@ namespace WinFormsApp1
             // Define a fonte para os números
             Font font = new Font("Arial", 16);
 
-            e.Graphics.DrawString(squareLocation.X.ToString(), font, Brushes.Red, 100, 100);
+            double power = calc(squareLocation.X, squareLocation2.X) ;
 
-
-            e.Graphics.DrawString(calc(squareLocation.X, squareLocation2.X).ToString(), font, Brushes.Red, 300, 400);
-
-            // Define a distância entre as marcas da régua
-            //int step = mockWidth/8;
-
-            // Define o comprimento da régua
-            //int length = mockWidth;
-
-            // Desenha as marcas da régua
-
-            /*
-            for (int i = 0; i <= length; i += step)
-            {
-                e.Graphics.DrawLine(pen, i, mockHeight -200, i, mockHeight + 10 -200);
-                e.Graphics.DrawLine(pen, i - (step/2), mockHeight - 200, i - (step/2), mockHeight + 10 - 200);
-
-                e.Graphics.DrawString((i/step).ToString(), font, Brushes.Red, i - 8, mockHeight - 190);
-
-
-            }*/
-
-            // Desenha
-
+            e.Graphics.DrawLine(pen, (int)((power * 150.25) + 364), 903, (int)((power * 150.25) + 364), 870);
+            e.Graphics.DrawLine(pen, (int)((power * 150.25) + 364), 903, (int)((power * 150.25) + 364), 870);
         }
     }
 }
